@@ -2,6 +2,16 @@
 
 MVP de um sistema de adoção responsável de animais, desenvolvido para a disciplina **Integração DevOps — Ciência da Computação 2026/2**.
 
+## Equipe do projeto
+
+O projeto definido pela equipe é o **AdotaPet**, um sistema para divulgar e cadastrar animais disponíveis para adoção responsável.
+
+| Integrante | Função |
+| :---: | :--- |
+| 🧑‍💻 **Luca** | **DEV** |
+| 🧪 **Fernanda** | **QA / Documentação / Versionamento** |
+| ⚙️ **Miguel** | **OPS / Infraestrutura** |
+
 ## Entrega 1 — Marco 1 (CI)
 
 Esta versão atende aos requisitos iniciais da disciplina:
@@ -57,13 +67,13 @@ Após publicar o repositório no GitHub, configure em **Settings → Branches �
 - exigir que o check **Testes automatizados** seja aprovado;
 - bloquear push direto e permitir apenas merge via Pull Request.
 
-## Organização sugerida da equipe
+## Responsabilidades da equipe no Marco 1
 
-| Papel | Responsabilidade no Marco 1 |
+| Integrante / papel | Responsabilidade no Marco 1 |
 | --- | --- |
-| Desenvolvimento | Interface, API e regras de negócio |
-| Qualidade | Casos de teste, revisão de PRs e acompanhamento da CI |
-| Operações/Infraestrutura | Repositório, proteção da `main` e configuração do GitHub Actions |
+| Luca — DEV | Interface, API, banco de dados e regras de negócio |
+| Fernanda — QA / Documentação / Versionamento | Casos de teste, revisão de Pull Requests, README e padronização de commits |
+| Miguel — OPS / Infraestrutura | Repositório, proteção da `main` e configuração do GitHub Actions |
 
 ## Próximas fases
 
