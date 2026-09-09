@@ -3,8 +3,34 @@ const count = document.querySelector("#animalCount");
 const form = document.querySelector("#animalForm");
 const message = document.querySelector("#formMessage");
 
-function escapeHtml(text) { return String(text).replace(/[&<>'"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" })[c]); }
-function card(animal) { return `<article class="card"><div class="pet-icon">${animal.species === "Gato" ? "🐈" : animal.species === "Cachorro" ? "🐕" : "🐾"}</div><span class="tag">${escapeHtml(animal.species)}</span><h3>${escapeHtml(animal.name)}</h3><p class="muted">${animal.age} ${animal.age === 1 ? "ano" : "anos"} · ${escapeHtml(animal.city)}</p><p>${escapeHtml(animal.description)}</p></article>`; }
+function escapeHtml(text) { return String(text).replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[c]); }
+
+function card(animal) {
+  const registrationDate = new Date(`${animal.created_at}Z`).toLocaleDateString("pt-BR");
+
+  return `
+    <article class="card">
+      <div class="pet-icon">
+        ${animal.species === "Gato" ? "🐈" : animal.species === "Cachorro" ? "🐕" : "🐾"}
+      </div>
+
+      <span class="tag">${escapeHtml(animal.species)}</span>
+
+      <h3>${escapeHtml(animal.name)}</h3>
+
+      <p class="muted">
+        ${animal.age} ${animal.age === 1 ? "ano" : "anos"} · ${escapeHtml(animal.city)}
+      </p>
+
+      <p class="muted">
+        Cadastrado em: ${registrationDate}
+      </p>
+
+      <p>${escapeHtml(animal.description)}</p>
+    </article>
+  `;
+}
+
 async function loadAnimals() {
   const params = new URLSearchParams();
   const species = document.querySelector("#speciesFilter").value;
@@ -14,6 +40,7 @@ async function loadAnimals() {
   count.textContent = `${animals.length} ${animals.length === 1 ? "animal encontrado" : "animais encontrados"}`;
   list.innerHTML = animals.length ? animals.map(card).join("") : "<p>Nenhum animal encontrado com esses filtros.</p>";
 }
+
 document.querySelector("#filterButton").addEventListener("click", loadAnimals);
 form.addEventListener("submit", async (event) => {
   event.preventDefault(); message.textContent = "";
@@ -23,4 +50,5 @@ form.addEventListener("submit", async (event) => {
   if (!response.ok) { message.className = "error full"; message.textContent = body.errors.join(" "); return; }
   message.className = "success full"; message.textContent = `${body.name} foi cadastrado com sucesso!`; form.reset(); loadAnimals();
 });
+
 loadAnimals();
