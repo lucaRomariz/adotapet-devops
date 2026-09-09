@@ -1,20 +1,56 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AdotaPet — Adoção responsável</title>
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <header><a class="brand" href="/">🐾 AdotaPet</a><span>Adoção responsável começa aqui</span></header>
-    <main>
-      <section class="hero"><p class="eyebrow">ENCONTRE UM NOVO AMIGO</p><h1>Todo animal merece um lar.</h1><p>Conheça animais disponíveis para adoção e ajude a conectar famílias.</p></section>
-      <section class="filters" aria-label="Filtros"><select id="speciesFilter"><option value="">Todas as espécies</option><option>Cachorro</option><option>Gato</option><option>Outro</option></select><input id="cityFilter" placeholder="Filtrar por cidade" /><button id="filterButton">Buscar</button></section>
-      <section><div class="section-title"><h2>Animais disponíveis</h2><span id="animalCount"></span></div><div id="animalList" class="cards" aria-live="polite"></div></section>
-      <section class="register"><div><p class="eyebrow">AJUDE A DIVULGAR</p><h2>Cadastrar um animal</h2><p>Use este formulário para incluir um animal resgatado no mural.</p></div><form id="animalForm"><label>Nome<input name="name" required minlength="2" /></label><label>Espécie<select name="species" required><option value="">Selecione</option><option>Cachorro</option><option>Gato</option><option>Outro</option></select></label><label>Idade (anos)<input name="age" type="number" min="0" max="30" required /></label><label>Cidade<input name="city" required minlength="2" /></label><label class="full">Descrição<textarea name="description" required minlength="10" placeholder="Conte um pouco sobre o animal..."></textarea></label><button>Cadastrar animal</button><p id="formMessage" class="full" role="status"></p></form></section>
-    </main>
-    <footer>Projeto acadêmico — Integração DevOps · Ciência da Computação 2026/2</footer>
-    <script src="/app.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AdotaPet — Adoção responsável</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+  <header><a class="brand" href="/">🐾 AdotaPet</a><span>Adoção responsável começa aqui</span></header>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">ENCONTRE UM NOVO AMIGO</p>
+      <h1>Todo animal merece um lar.</h1>
+      <p>Conheça animais disponíveis para adoção e ajude a conectar famílias.</p>
+    </section>
+    <section class="filters" aria-label="Filtros"><select id="speciesFilter">
+        <option value="">Todas as espécies</option>
+        <option>Cachorro</option>
+        <option>Gato</option>
+        <option>Outro</option>
+      </select><input id="cityFilter" placeholder="Filtrar por cidade" /><button id="filterButton">Buscar</button>
+    </section>
+    <section>
+      <div class="section-title">
+        <h2>Animais disponíveis</h2><span id="animalCount"></span>
+      </div>
+      <div id="animalList" class="cards" aria-live="polite"></div>
+    </section>
+    <section class="register">
+      <div>
+        <p class="eyebrow">AJUDE A DIVULGAR</p>
+        <h2>Cadastrar um animal</h2>
+        <p>Use este formulário para incluir um animal resgatado no mural.</p>
+      </div>
+      <form id="animalForm"><label>Nome<input name="name" required minlength="2" /></label><label>Espécie<select
+            name="species" required>
+            <option value="">Selecione</option>
+            <option>Cachorro</option>
+            <option>Gato</option>
+            <option>Outro</option>
+          </select></label><label>Idade (anos)<input name="age" type="number" min="0" max="30"
+            required /></label><label>Cidade<input name="city" required minlength="2" /></label><label
+          class="full">Descrição<textarea name="description" required minlength="10"
+            placeholder="Conte um pouco sobre o animal..."></textarea></label><button>Cadastrar animal</button>
+        <p id="formMessage" class="full" role="status"></p>
+      </form>
+    </section>
+  </main>
+  <footer>Projeto acadêmico — Integração DevOps · 2026/2</footer>
+  <script src="/app.js"></script>
+</body>
+
 </html>
