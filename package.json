@@ -4,7 +4,10 @@
   "private": true,
   "description": "MVP de sistema de adoção de animais para a disciplina de Integração DevOps.",
   "type": "module",
-  "scripts": {
+  "scripts": { "scripts": {
+  "check": "find . -name '*.js' -not -path './node_modules/*' -exec node --check {} +",
+  "test": "..." 
+}
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "node --test"
