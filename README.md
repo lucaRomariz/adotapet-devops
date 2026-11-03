@@ -91,5 +91,3 @@ docker compose up -d --build --wait
 Acesse `http://localhost:3000`. Para encerrar sem apagar os dados, use `docker compose down`.
 
 O CD publica no GHCR em pushes na `main` e tags `vX.Y.Z`. A homologação é simulada em runner temporário: baixa a imagem publicada por digest e verifica saúde, interface, API, persistência e rollback. Logs ficam disponíveis como artefato da execução. O acesso ao registry usa `secrets.GITHUB_TOKEN`, sem credenciais no código.
-
-O [guia da A2](docs/entrega-a2.md) contém comandos, versionamento, rollback, roteiro da apresentação e tarefas simples para **Fernanda (validação e evidências de QA)** e **Miguel (conferência do GitHub e evidências de OPS)**.
