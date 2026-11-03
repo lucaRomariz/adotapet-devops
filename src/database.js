@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const databaseDir = path.join(here, "..", "database");
+const databaseDir = process.env.DATABASE_DIR || path.join(here, "..", "database");
 fs.mkdirSync(databaseDir, { recursive: true });
 
 const db = new DatabaseSync(path.join(databaseDir, "adota-pet.sqlite"));
@@ -39,4 +39,8 @@ export function createAnimal(animal) {
     "INSERT INTO animals (name, species, age, city, description) VALUES (?, ?, ?, ?, ?)"
   ).run(animal.name, animal.species, animal.age, animal.city, animal.description);
   return db.prepare("SELECT * FROM animals WHERE id = ?").get(result.lastInsertRowid);
+}
+
+export function checkDatabase() {
+  return db.prepare("SELECT 1 AS ok").get().ok === 1;
 }

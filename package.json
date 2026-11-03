@@ -1,6 +1,6 @@
 {
   "name": "adota-pet",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "MVP de sistema de adoção de animais para a disciplina de Integração DevOps.",
   "type": "module",
