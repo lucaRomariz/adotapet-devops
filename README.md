@@ -79,3 +79,17 @@ Após publicar o repositório no GitHub, configure em **Settings → Branches �
 
 - **A2:** Dockerfile, Docker Compose, publicação de imagem e CD;
 - **A3:** análise de segurança, métricas, logs, Grafana e documentação final.
+
+## Entrega 2 — A2 (04/11/2026)
+
+A implementação da A2 inclui Dockerfile com usuário sem privilégios e healthcheck, Docker Compose com SQLite em volume persistente, testes de integração e pipelines de CI/CD. A validação completa em Docker deve ser confirmada pelos checks do GitHub Actions.
+
+```bash
+docker compose up -d --build --wait
+```
+
+Acesse `http://localhost:3000`. Para encerrar sem apagar os dados, use `docker compose down`.
+
+O CD publica no GHCR em pushes na `main` e tags `vX.Y.Z`. A homologação é simulada em runner temporário: baixa a imagem publicada por digest e verifica saúde, interface, API, persistência e rollback. Logs ficam disponíveis como artefato da execução. O acesso ao registry usa `secrets.GITHUB_TOKEN`, sem credenciais no código.
+
+O [guia da A2](docs/entrega-a2.md) contém comandos, versionamento, rollback, roteiro da apresentação e tarefas simples para **Fernanda (validação e evidências de QA)** e **Miguel (conferência do GitHub e evidências de OPS)**.

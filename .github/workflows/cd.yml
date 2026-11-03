@@ -1,0 +1,111 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Testar e publicar no GHCR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.names.outputs.image }}
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Definir imagem e validar versão
+        id: names
+        env:
+          REPOSITORY: ${{ github.repository }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          image="ghcr.io/${REPOSITORY,,}"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "tag=$image:sha-$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+          if [ "$REF_TYPE" = tag ]; then
+            [[ "$REF_NAME" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || exit 1
+            version=$(node -p "JSON.parse(require('fs').readFileSync('package.json','utf8')).version")
+            [ "$REF_NAME" = "v$version" ] || { echo 'Tag diverge de package.json'; exit 1; }
+            echo "release_tag=$image:$version" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Validar imagem antes da publicação
+        run: |
+          docker compose config --quiet
+          docker build -t adotapet:local .
+          bash scripts/verify-containers.sh
+      - name: Autenticar com secret temporário do GitHub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publicar imagem testada
+        id: build
+        env:
+          IMAGE: ${{ steps.names.outputs.image }}
+          SHA_TAG: ${{ steps.names.outputs.tag }}
+          RELEASE_TAG: ${{ steps.names.outputs.release_tag }}
+        run: |
+          docker tag adotapet:local "$SHA_TAG"
+          docker push "$SHA_TAG"
+          if [ -n "$RELEASE_TAG" ]; then
+            docker tag adotapet:local "$RELEASE_TAG"
+            docker push "$RELEASE_TAG"
+          fi
+          digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$SHA_TAG")
+          echo "digest=${digest#*@}" >> "$GITHUB_OUTPUT"
+  deploy:
+    name: Homologação simulada
+    runs-on: ubuntu-latest
+    needs: publish
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Baixar imagem publicada por digest e testar deploy
+        env:
+          APP_IMAGE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
+        run: |
+          docker pull "$APP_IMAGE"
+          bash scripts/verify-containers.sh 2>&1 | tee deploy-evidence.log
+      - name: Guardar evidência
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homologacao-${{ github.sha }}
+          path: deploy-evidence.log
+          retention-days: 30
+      - name: Resumo da entrega
+        env:
+          IMAGE: ${{ needs.publish.outputs.image }}
+          DIGEST: ${{ needs.publish.outputs.digest }}
+        run: |
+          echo "### Homologação simulada aprovada" >> "$GITHUB_STEP_SUMMARY"
+          echo "Imagem: $IMAGE@$DIGEST" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Saúde, interface, API, persistência e rollback verificados no runner temporário.' >> "$GITHUB_STEP_SUMMARY"

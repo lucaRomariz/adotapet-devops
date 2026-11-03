@@ -2,7 +2,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createAnimal, listAnimals } from "./database.js";
+import { checkDatabase, createAnimal, listAnimals } from "./database.js";
 import { filterAnimals, validateAnimal } from "./domain/animals.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -24,6 +24,14 @@ function serveFile(response, filename, contentType) {
 
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
+
+  if (request.method === "GET" && url.pathname === "/health") {
+    try {
+      return sendJson(response, checkDatabase() ? 200 : 503, { status: "ok" });
+    } catch {
+      return sendJson(response, 503, { status: "unavailable" });
+    }
+  }
 
   if (request.method === "GET" && url.pathname === "/api/animals") {
     const animals = filterAnimals(listAnimals(), Object.fromEntries(url.searchParams));
@@ -51,4 +59,11 @@ const server = http.createServer((request, response) => {
   return sendJson(response, 404, { error: "Rota não encontrada." });
 });
 
-server.listen(port, () => console.log(`AdotaPet disponível em http://localhost:${port}`));
+server.listen(port, () => console.log(`AdotaPet disponível em http://localhost:${server.address().port}`));
+
+for (const signal of ["SIGTERM", "SIGINT"]) {
+  process.on(signal, () => {
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(1), 10000).unref();
+  });
+}
