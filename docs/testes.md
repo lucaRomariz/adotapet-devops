@@ -20,10 +20,10 @@ Casos de teste — Cadastro de animais
 Fernanda deve preencher depois de executar ou consultar os logs:
 
 | Caso | Resultado observado | Link da evidência / data |
-| --- | --- | --- |
-| Testes Node e integração HTTP | Pendente | Pendente |
-| Saúde, interface e API no contêiner | Pendente | Pendente |
-| Persistência após recriar contêiner | Pendente | Pendente |
-| Falha proposital detectada | Pendente | Pendente |
-| Rollback com dados preservados | Pendente | Pendente |
-| Cadastro manual válido e inválido (se executado) | Pendente | Pendente |
+|---|---|---|
+| Testes Node e integração HTTP | Aprovado: `npm test` passou no job "Testar e publicar no GHCR" | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
+| Saúde, interface e API no contêiner | Aprovado: contêiner `Healthy`; log: "Smoke aprovado: saúde, interface e API/banco." | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
+| Persistência após recriar contêiner | Aprovado: contêiner recriado voltou `Healthy`; log: "Persistência aprovada após recriar container." | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
+| Falha proposital detectada | Aprovado: atualização com a imagem `adotapet:broken` falhou ao iniciar; log: "Falha detectada; restaurando imagem anterior." | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
+| Rollback com dados preservados | Aprovado: imagem anterior restaurada e `Healthy`; log: "Rollback aprovado com dados preservados." | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
+| Cadastro manual válido e inválido (se executado) | Não executado manualmente; validação automatizada | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
