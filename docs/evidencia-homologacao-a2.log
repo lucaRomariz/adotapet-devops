@@ -1,0 +1,73 @@
+ Network adotapet-check_default Creating
+ Network adotapet-check_default Created
+ Volume adotapet-check_animal-data Creating
+ Volume adotapet-check_animal-data Created
+ Container adotapet-check-app-1 Creating
+ Container adotapet-check-app-1 Created
+ Container adotapet-check-app-1 Starting
+ Container adotapet-check-app-1 Started
+ Container adotapet-check-app-1 Waiting
+ Container adotapet-check-app-1 Healthy
+Smoke aprovado: saúde, interface e API/banco.
+ Container adotapet-check-app-1 Recreate
+ Container adotapet-check-app-1 Recreated
+ Container adotapet-check-app-1 Starting
+ Container adotapet-check-app-1 Started
+ Container adotapet-check-app-1 Waiting
+ Container adotapet-check-app-1 Healthy
+Persistência aprovada após recriar container.
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 190B done
+#1 DONE 0.0s
+
+#2 [auth] lucaromariz/adotapet-devops:pull token for ghcr.io
+#2 DONE 0.0s
+
+#3 [internal] load metadata for ghcr.io/lucaromariz/adotapet-devops@sha256:4e78d83d7e9bd301f99d9c35e3cb2149c7692b3f27a8df309661ac3def09f597
+#3 DONE 0.4s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 102B done
+#4 DONE 0.0s
+
+#5 [1/1] FROM ghcr.io/lucaromariz/adotapet-devops@sha256:4e78d83d7e9bd301f99d9c35e3cb2149c7692b3f27a8df309661ac3def09f597
+#5 resolve ghcr.io/lucaromariz/adotapet-devops@sha256:4e78d83d7e9bd301f99d9c35e3cb2149c7692b3f27a8df309661ac3def09f597 done
+#5 DONE 0.1s
+
+#6 exporting to image
+#6 exporting layers done
+#6 exporting manifest sha256:5410fd883418c7195e3f9ed3e98df39efd162c3a939959eb27f414e5a76cba99 done
+#6 exporting config sha256:7412b400ae63917e0c2a4e15480c61c8f12c7729dac013f1182bbdb86876c6a6 done
+#6 exporting attestation manifest sha256:dd76a0f24ebacafc810ae3a22f868b7158590b548edb57b8a06f04a071e2a51f done
+#6 exporting manifest list sha256:733ddfcd03f8cc7f3d4b62f43bc47f660db823150de281228572767ffc36f7ed done
+#6 naming to docker.io/library/adotapet:broken done
+#6 unpacking to docker.io/library/adotapet:broken done
+#6 DONE 0.1s
+ Container adotapet-check-app-1 Recreate
+ Container adotapet-check-app-1 Recreated
+ Container adotapet-check-app-1 Starting
+ Container adotapet-check-app-1 Started
+ Container adotapet-check-app-1 Waiting
+container adotapet-check-app-1 is unhealthy
+Falha detectada; restaurando imagem anterior.
+ Container adotapet-check-app-1 Recreate
+ Container adotapet-check-app-1 Recreated
+ Container adotapet-check-app-1 Starting
+ Container adotapet-check-app-1 Started
+ Container adotapet-check-app-1 Waiting
+ Container adotapet-check-app-1 Healthy
+Smoke aprovado: saúde, interface e API/banco.
+Rollback aprovado com dados preservados.
+app-1  | (node:7) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+app-1  | (Use `node --trace-warnings ...` to show where the warning was created)
+app-1  | AdotaPet disponível em http://localhost:3000
+ Container adotapet-check-app-1 Stopping
+ Container adotapet-check-app-1 Stopped
+ Container adotapet-check-app-1 Removing
+ Container adotapet-check-app-1 Removed
+ Volume adotapet-check_animal-data Removing
+ Network adotapet-check_default Removing
+ Volume adotapet-check_animal-data Removed
+ Network adotapet-check_default Removed
