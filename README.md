@@ -91,3 +91,13 @@ docker compose up -d --build --wait
 Acesse `http://localhost:3000`. Para encerrar sem apagar os dados, use `docker compose down`.
 
 O CD publica no GHCR em pushes na `main` e tags `vX.Y.Z`. A homologação é simulada em runner temporário: baixa a imagem publicada por digest e verifica saúde, interface, API, persistência e rollback. Logs ficam disponíveis como artefato da execução. O acesso ao registry usa `secrets.GITHUB_TOKEN`, sem credenciais no código.
+## Evidências de infraestrutura — A2
+
+- Release: [v1.0.0](https://github.com/lucaRomariz/adotapet-devops/releases/tag/v1.0.0)
+- Imagem: `ghcr.io/lucaromariz/adotapet-devops:1.0.0`
+- CD: [execução aprovada](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055)
+- Homologação simulada executada no GitHub Actions.
+- Persistência e rollback verificados pelo pipeline.
+
+Conferência realizada por Miguel em 03/11/2026.
+
