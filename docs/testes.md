@@ -7,7 +7,7 @@ Casos de teste — Cadastro de animais
 - Descrição com menos de 10 caracteres deve ser rejeitada.
 - O filtro por cidade deve ignorar maiúsculas e minúsculas.
 
-## A2 — Testes preparados
+## A2 — Testes automatizados
 
 - `npm test`: regras de negócio e integração HTTP com banco temporário, cadastro, JSON inválido, saúde, interface, rota inexistente e persistência após reiniciar o processo.
 - `node scripts/smoke.mjs`: saúde, interface e listagem da API; requer aplicação rodando.
@@ -17,7 +17,7 @@ Casos de teste — Cadastro de animais
 
 ### Registro de execução pela QA
 
-Fernanda deve preencher depois de executar ou consultar os logs:
+Resultados registrados por Fernanda após consulta aos logs da execução vinculada em cada linha. O cadastro manual não foi executado pela QA nessa conferência.
 
 | Caso | Resultado observado | Link da evidência / data |
 |---|---|---|
@@ -27,3 +27,8 @@ Fernanda deve preencher depois de executar ou consultar os logs:
 | Falha proposital detectada | Aprovado: atualização com a imagem `adotapet:broken` falhou ao iniciar; log: "Falha detectada; restaurando imagem anterior." | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
 | Rollback com dados preservados | Aprovado: imagem anterior restaurada e `Healthy`; log: "Rollback aprovado com dados preservados." | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
 | Cadastro manual válido e inválido (se executado) | Não executado manualmente; validação automatizada | [Execução do CD](https://github.com/lucaRomariz/adotapet-devops/actions/runs/41700010055) - 03/11/2026 |
+
+
+### Evidência preservada e reprodução
+
+O [log original de homologação](evidencia-homologacao-a2.log) conserva o resultado de uma execução posterior aprovada, correspondente ao commit `4e9e6db`, após integrar as contribuições da equipe. A origem, o digest do artefato e os comandos para repetir a simulação estão no [README](../README.md#preservação-das-evidências). Os links da tabela acima permanecem como registro da execução efetivamente consultada por Fernanda.
