@@ -38,13 +38,15 @@ jobs:
         with:
           node-version: 22
       - name: Validar Compose e construir imagem
+        id: build
         run: |
           docker compose config --quiet
           docker build -t adotapet:local .
-      - uses: ./.github/actions/security
-        with:
-          image: adotapet:local
       - name: Testar contêiner, volume e rollback
         run: bash scripts/verify-containers.sh
       - name: Verificar dashboard, métricas e logs
         run: bash scripts/verify-observability.sh
+      - uses: ./.github/actions/security
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        with:
+          image: adotapet:local
