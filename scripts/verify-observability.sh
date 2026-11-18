@@ -2,7 +2,7 @@
 set -euo pipefail
 
 export COMPOSE_PROJECT_NAME=adotapet-observability-check
-export APP_IMAGE=adotapet:local
+export APP_IMAGE="${APP_IMAGE:-adotapet:local}"
 export APP_PORT=3000
 export GRAFANA_PORT=3001
 export GRAFANA_ADMIN_PASSWORD

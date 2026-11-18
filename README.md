@@ -216,7 +216,7 @@ flowchart LR
 ```
 
 - **Semgrep** verifica JavaScript da API e da interface. Achados ou falhas na execução bloqueiam a etapa.
-- **Trivy** escaneia as dependências declaradas no repositório e os pacotes da imagem construída. Hoje a aplicação não declara dependências externas de npm. O lockfile é versionado para detectar dependências adicionadas futuramente. Vulnerabilidades críticas e altas com correção disponível bloqueiam o pipeline. Achados restantes aparecem no relatório JSON para triagem.
+- **Trivy** escaneia as dependências declaradas no repositório e os pacotes da imagem construída. Hoje a aplicação não declara dependências externas de npm. O lockfile é versionado para detectar dependências adicionadas futuramente. O pipeline bloqueia toda vulnerabilidade crítica e toda vulnerabilidade alta com correção disponível. Achados restantes aparecem no relatório JSON para triagem.
 - Os artefatos `seguranca-*` ficam na execução do GitHub Actions por 90 dias. O CD publica a própria imagem escaneada e usa seu digest na homologação.
 - Os checks existentes de testes e contêiner continuam sendo usados na revisão. O check de contêiner depende do check de SAST e dependências.
 
@@ -288,6 +288,8 @@ A verificação automatizada em `scripts/verify-observability.sh` sobe uma stack
 | Host da demo indisponível | Ensaiar no host da apresentação e guardar o link de uma execução aprovada e a stack local como contingência |
 
 **Cenário de post-mortem simulado.** O teste de rollback usa uma imagem que encerra imediatamente após iniciar. O healthcheck detecta a falha e a aplicação fica indisponível durante a tentativa de atualização. O script restaura a imagem anterior e confirma que o registro de teste continua no SQLite. A evidência da A2 está em `docs/evidencia-homologacao-a2.log`. A confirmação no ambiente da A3 deve ser registrada na execução do workflow.
+
+**Ocorrência da A3.** O primeiro scan bloqueou a imagem baseada em Debian Bookworm. O Trivy sinalizou o zlib da base e dependências trazidas pelo npm da imagem oficial de Node, embora a aplicação rode diretamente com Node. O Dockerfile passou a copiar somente o executável Node.js para uma base Debian Trixie, com as bibliotecas de runtime. O usuário do contêiner manteve UID/GID 1000 para acesso ao volume existente.
 
 ### Roteiro para a apresentação
 

@@ -98,6 +98,7 @@ jobs:
         run: |
           docker pull "$APP_IMAGE"
           bash scripts/verify-containers.sh 2>&1 | tee deploy-evidence.log
+          bash scripts/verify-observability.sh 2>&1 | tee -a deploy-evidence.log
       - name: Guardar evidência
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -112,7 +113,7 @@ jobs:
         run: |
           echo "### Homologação simulada aprovada" >> "$GITHUB_STEP_SUMMARY"
           echo "Imagem: $IMAGE@$DIGEST" >> "$GITHUB_STEP_SUMMARY"
-          echo 'Saúde, interface, API, persistência e rollback verificados no runner temporário.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Saúde, interface, API, persistência, rollback e observabilidade verificados no runner temporário.' >> "$GITHUB_STEP_SUMMARY"
 
   deploy-demo:
     name: Deploy no ambiente da apresentação
