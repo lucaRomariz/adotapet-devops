@@ -42,6 +42,13 @@ test('HTTP integra interface, saúde, validação e persistência SQLite', async
     assert.match(await (await fetch(base)).text(), /AdotaPet/);
     const invalid = await fetch(`${base}/api/animals`, {method:'POST',body:'{'});
     assert.equal(invalid.status, 400);
+    assert.match(invalid.headers.get('x-request-id'), /^[a-f0-9-]{36}$/);
+    const metrics = await fetch(`${base}/metrics`);
+    assert.match(metrics.headers.get('content-type'), /^text\/plain/);
+    const series = await metrics.text();
+    assert.match(series, /adotapet_http_requests_total\{method="POST",route="\/api\/animals",status="400"\} 1/);
+    assert.match(series, /adotapet_http_request_duration_seconds_count 3/);
+    assert.match(series, /process_resident_memory_bytes [1-9]/);
     const response = await fetch(`${base}/api/animals`, {
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name:'Teste HTTP',species:'Gato',age:2,city:'Brasília',description:'Animal criado pelo teste de integração.'})

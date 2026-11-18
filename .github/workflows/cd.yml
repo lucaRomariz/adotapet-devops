@@ -29,6 +29,7 @@ jobs:
         with:
           node-version: 22
       - run: npm test
+      - uses: ./.github/actions/security
       - name: Definir imagem e validar versão
         id: names
         env:
@@ -50,6 +51,9 @@ jobs:
           docker compose config --quiet
           docker build -t adotapet:local .
           bash scripts/verify-containers.sh
+      - uses: ./.github/actions/security
+        with:
+          image: adotapet:local
       - name: Autenticar com secret temporário do GitHub
         uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
@@ -109,3 +113,24 @@ jobs:
           echo "### Homologação simulada aprovada" >> "$GITHUB_STEP_SUMMARY"
           echo "Imagem: $IMAGE@$DIGEST" >> "$GITHUB_STEP_SUMMARY"
           echo 'Saúde, interface, API, persistência e rollback verificados no runner temporário.' >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-demo:
+    name: Deploy no ambiente da apresentação
+    if: github.ref == 'refs/heads/main' && vars.DEMO_DEPLOY_ENABLED == 'true'
+    needs: [publish, deploy]
+    runs-on: ubuntu-24.04
+    environment: homologacao
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Atualizar o ambiente por digest e validar
+        env:
+          APP_IMAGE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
+          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+          DEMO_SSH_KEY: ${{ secrets.DEMO_SSH_KEY }}
+          DEMO_SSH_KNOWN_HOSTS: ${{ secrets.DEMO_SSH_KNOWN_HOSTS }}
+          DEMO_SSH_TARGET: ${{ vars.DEMO_SSH_TARGET }}
+        run: bash scripts/upload-demo.sh

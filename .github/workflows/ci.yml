@@ -22,10 +22,16 @@ jobs:
           node-version: 22
       - name: Executar testes
         run: npm test
+  security:
+    name: SAST e dependências
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/security
   container:
     name: Build, persistência e rollback
     runs-on: ubuntu-24.04
-    needs: test
+    needs: [test, security]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -35,5 +41,10 @@ jobs:
         run: |
           docker compose config --quiet
           docker build -t adotapet:local .
+      - uses: ./.github/actions/security
+        with:
+          image: adotapet:local
       - name: Testar contêiner, volume e rollback
         run: bash scripts/verify-containers.sh
+      - name: Verificar dashboard, métricas e logs
+        run: bash scripts/verify-observability.sh

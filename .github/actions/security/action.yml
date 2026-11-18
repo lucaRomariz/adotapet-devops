@@ -1,0 +1,42 @@
+name: Segurança da A3
+description: Analisa código e dependências ou verifica a imagem Docker construída.
+inputs:
+  image:
+    description: Imagem local a escanear. Vazio analisa código e dependências.
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Semgrep SAST
+      if: inputs.image == ''
+      shell: bash
+      run: |
+        docker run --rm -v "$PWD:/src:ro" -w /src semgrep/semgrep:1.184.0 \
+          semgrep scan --config p/javascript --metrics off --error --strict --json src public > sast.security.json
+    - name: Trivy dependências
+      if: inputs.image == '' && !cancelled()
+      shell: bash
+      run: |
+        docker run --rm -v "$PWD:/workspace:ro" ghcr.io/aquasecurity/trivy:0.76.2 \
+          fs --scanners vuln --format json /workspace > dependencies.security.json
+        bash scripts/check-vulnerabilities.sh dependencies.security.json
+    - name: Trivy imagem
+      if: inputs.image != ''
+      shell: bash
+      env:
+        SCAN_IMAGE: ${{ inputs.image }}
+      run: |
+        archive=$(mktemp -d)
+        trap 'rm -rf "$archive"' EXIT
+        docker save "$SCAN_IMAGE" -o "$archive/image.tar"
+        docker run --rm -v "$archive:/scan:ro" ghcr.io/aquasecurity/trivy:0.76.2 \
+          image --input /scan/image.tar --scanners vuln --format json > image-scan.json
+        bash scripts/check-vulnerabilities.sh image-scan.json
+    - name: Guardar relatórios
+      if: '!cancelled()'
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: seguranca-${{ github.job }}-${{ inputs.image == '' && 'codigo' || 'imagem' }}-${{ github.run_attempt }}
+        path: ${{ inputs.image == '' && '*.security.json' || 'image-scan.json' }}
+        retention-days: 90

@@ -6,3 +6,6 @@ coverage/
 .env
 .env.*
 !.env.example
+*.security.json
+image-scan.json
+*.json.blocking
