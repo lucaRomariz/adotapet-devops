@@ -289,7 +289,7 @@ A verificação automatizada em `scripts/verify-observability.sh` sobe uma stack
 
 **Cenário de post-mortem simulado.** O teste de rollback usa uma imagem que encerra imediatamente após iniciar. O healthcheck detecta a falha e a aplicação fica indisponível durante a tentativa de atualização. O script restaura a imagem anterior e confirma que o registro de teste continua no SQLite. A evidência da A2 está em `docs/evidencia-homologacao-a2.log`. A confirmação no ambiente da A3 deve ser registrada na execução do workflow.
 
-**Ocorrência da A3.** O primeiro scan bloqueou a imagem baseada em Debian Bookworm. O Trivy sinalizou o zlib da base e dependências trazidas pelo npm da imagem oficial de Node, embora a aplicação rode diretamente com Node. O Dockerfile passou a copiar somente o executável Node.js para uma base Debian Trixie, com as bibliotecas de runtime. O usuário do contêiner manteve UID/GID 1000 para acesso ao volume existente.
+**Ocorrência da A3.** O primeiro scan bloqueou a imagem baseada em Debian Bookworm. O Trivy sinalizou o zlib da base e dependências trazidas pelo npm da imagem oficial de Node, embora a aplicação rode diretamente com Node. O Dockerfile passou a copiar somente o executável Node.js para uma base Debian Trixie, com as bibliotecas de runtime, incluindo a atualização de segurança do zlib disponível no repositório Debian. O usuário do contêiner manteve UID/GID 1000 para acesso ao volume existente.
 
 ### Roteiro para a apresentação
 
