@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkDatabase, createAnimal, listAnimals } from "./database.js";
 import { filterAnimals, validateAnimal } from "./domain/animals.js";
+import { observeRequest, serveMetrics } from "./telemetry.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
@@ -22,8 +23,7 @@ function serveFile(response, filename, contentType) {
   });
 }
 
-const server = http.createServer((request, response) => {
-  const url = new URL(request.url, `http://${request.headers.host}`);
+function handleRequest(request, response, url) {
 
   if (request.method === "GET" && url.pathname === "/health") {
     try {
@@ -34,20 +34,25 @@ const server = http.createServer((request, response) => {
   }
 
   if (request.method === "GET" && url.pathname === "/api/animals") {
-    const animals = filterAnimals(listAnimals(), Object.fromEntries(url.searchParams));
-    return sendJson(response, 200, animals);
+    return sendJson(response, 200, filterAnimals(listAnimals(), Object.fromEntries(url.searchParams)));
   }
 
   if (request.method === "POST" && url.pathname === "/api/animals") {
     let rawBody = "";
     request.on("data", (chunk) => { rawBody += chunk; });
     request.on("end", () => {
+      let input;
       try {
-        const validation = validateAnimal(JSON.parse(rawBody || "{}"));
-        if (!validation.valid) return sendJson(response, 400, { errors: validation.errors });
-        return sendJson(response, 201, createAnimal(validation.animal));
+        input = JSON.parse(rawBody || "{}");
       } catch {
         return sendJson(response, 400, { errors: ["Envie um JSON válido."] });
+      }
+      const validation = validateAnimal(input);
+      if (!validation.valid) return sendJson(response, 400, { errors: validation.errors });
+      try {
+        return sendJson(response, 201, createAnimal(validation.animal));
+      } catch {
+        return sendJson(response, 500, { error: "Erro interno." });
       }
     });
     return;
@@ -57,6 +62,23 @@ const server = http.createServer((request, response) => {
   if (request.method === "GET" && url.pathname === "/styles.css") return serveFile(response, "styles.css", "text/css; charset=utf-8");
   if (request.method === "GET" && url.pathname === "/app.js") return serveFile(response, "app.js", "application/javascript; charset=utf-8");
   return sendJson(response, 404, { error: "Rota não encontrada." });
+}
+
+const server = http.createServer((request, response) => {
+  let url;
+  try {
+    url = new URL(request.url, "http://localhost");
+  } catch {
+    observeRequest(request, response, "other");
+    return sendJson(response, 400, { error: "URL inválida." });
+  }
+  if (request.method === "GET" && url.pathname === "/metrics") return serveMetrics(response);
+  observeRequest(request, response, url.pathname);
+  try {
+    return handleRequest(request, response, url);
+  } catch {
+    return sendJson(response, 500, { error: "Erro interno." });
+  }
 });
 
 server.listen(port, () => console.log(`AdotaPet disponível em http://localhost:${server.address().port}`));

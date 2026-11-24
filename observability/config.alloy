@@ -1,0 +1,32 @@
+discovery.docker "adotapet" {
+  host = "unix:///var/run/docker.sock"
+  refresh_interval = "5s"
+
+  filter {
+    name   = "label"
+    values = ["com.docker.compose.service=app"]
+  }
+}
+
+discovery.relabel "adotapet" {
+  targets = discovery.docker.adotapet.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    regex         = sys.env("ADOTAPET_COMPOSE_PROJECT")
+    action        = "keep"
+  }
+}
+
+loki.source.docker "adotapet" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.adotapet.output
+  labels     = { app = "adotapet" }
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
